@@ -358,7 +358,7 @@ bash scripts/test-kb-sync.sh                    # the step 21 reconciliation aga
 | [`core/ORCHESTRATION.md`](core/ORCHESTRATION.md) | Host capabilities and their degradations |
 | [`docs/DESIGN-NOTES.md`](docs/DESIGN-NOTES.md) | Why the core's rules are what they are — not vendored into a project |
 | [`README_ru.md`](README_ru.md) | This file in Russian |
-| [`trunkline-overview.ru.html`](trunkline-overview.ru.html) | Slide-deck overview of the pipeline (Russian) |
+| [`index.html`](index.html) | Slide-deck overview of the pipeline (Russian) |
 
 ---
 

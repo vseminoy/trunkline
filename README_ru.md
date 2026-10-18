@@ -6,7 +6,7 @@
 который устанавливает его в ваш проект.**
 
 На английском: [`README.md`](README.md). Подробная презентация (слайды) с разбором всей механики:
-[`trunkline-overview.ru.html`](trunkline-overview.ru.html).
+[`index.html`](index.html).
 
 ---
 
@@ -229,7 +229,7 @@ agent-skills/ submodule → addyosmani/agent-skills (только чтение)
 | [`core/ORCHESTRATION.md`](core/ORCHESTRATION.md) | Возможности хоста и их деградации |
 | [`docs/DESIGN-NOTES.md`](docs/DESIGN-NOTES.md) | Почему правила ядра такие, какие есть |
 | [`README.md`](README.md) | Этот файл на английском |
-| [`trunkline-overview.ru.html`](trunkline-overview.ru.html) | Презентация: подробный разбор всего пайплайна |
+| [`index.html`](index.html) | Презентация: подробный разбор всего пайплайна |
 
 ---
 
