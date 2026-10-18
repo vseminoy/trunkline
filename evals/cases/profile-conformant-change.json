@@ -1,0 +1,14 @@
+{
+  "skill_name": "profile-conformant-change",
+  "trigger": {
+    "positive": [
+      { "prompt": "Make this small fix in the handler following the rules of the stack profile the project declares", "top_k": 3 },
+      { "prompt": "Which guidelines of the profile apply to the layer I am changing, and how do I verify the change with its commands?", "top_k": 3 },
+      { "prompt": "Write the code under the profile's guidelines and run the profile's build, lint and test commands", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Record in .pipeline/knowledge what changed in the module as a result of this task", "owner": "project-knowledge" },
+      { "prompt": "Break the epic into Jira tasks with estimates", "owner": "decompose-from-scratch" }
+    ]
+  }
+}

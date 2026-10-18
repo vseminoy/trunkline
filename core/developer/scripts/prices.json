@@ -1,0 +1,31 @@
+{
+  "as_of": "2026-06-24",
+  "source": "https://www.anthropic.com/pricing",
+  "currency": "USD per 1M tokens, Anthropic list price",
+  "notes": [
+    "Model keys are matched by longest prefix, so a dated id such as",
+    "claude-haiku-4-5-20251001 resolves through its family key. A model that",
+    "matches nothing is counted in tokens but left unpriced — never priced at zero.",
+    "Cache rates are multipliers of `in` rather than absolute numbers, because",
+    "Anthropic quotes them that way; keeping them absolute here is how the two",
+    "drift apart on the next change.",
+    "Sonnet 5 carried an introductory rate of 2.00 / 10.00 through 2026-08-31.",
+    "List price is what is recorded here: this file is dated, and a promotion",
+    "is not. Copy the file and pass --prices to bill a promotion while it lasts."
+  ],
+  "multipliers": {
+    "cache_write_5m": 1.25,
+    "cache_write_1h": 2.0,
+    "cache_read": 0.1
+  },
+  "models": {
+    "claude-opus-5": {"in": 5.0, "out": 25.0},
+    "claude-opus-4-8": {"in": 5.0, "out": 25.0},
+    "claude-opus-4-7": {"in": 5.0, "out": 25.0},
+    "claude-opus-4-6": {"in": 5.0, "out": 25.0},
+    "claude-fable-5": {"in": 10.0, "out": 50.0},
+    "claude-sonnet-5": {"in": 3.0, "out": 15.0},
+    "claude-sonnet-4-6": {"in": 3.0, "out": 15.0},
+    "claude-haiku-4-5": {"in": 1.0, "out": 5.0}
+  }
+}

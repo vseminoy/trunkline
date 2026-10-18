@@ -1,0 +1,20 @@
+{
+  "_comment": "sha256 английского исходника на момент перевода. Обновлять только вместе с самим переводом: python3 scripts/lint-l10n.py --update ru",
+  "language": "ru",
+  "sources": {
+    "analytic/PIPELINE.md": "3cea1379c54636ff9d644d62306598fa8ab7b1f9d795122aa7a226e97ca1e12b",
+    "analytic/references/ears-notation.md": "03a81288a18c3010325fcb2c09dad96f0e2de2ca0bbfb8ce0f0b334c4552a597",
+    "analytic/skills/analysis-state/SKILL.md": "e7a0eca388240edece9aab471f2ad980c133904cc63a57d5d2508ca3d0851012",
+    "analytic/skills/analysis-state/assets/state-template.md": "799d8c2b2054324f2b1b7e15cd1f79d36c506182b262af32a964709938a028c2",
+    "analytic/skills/decompose-from-scratch/SKILL.md": "38d64c0c968413a645e985e3722e8cd7e846f04b45676beb15c0c334d91aabcd",
+    "analytic/skills/resolve-open-questions/SKILL.md": "da57459e1efa40546000db86bc3818d59060b9bd85e3b98cf477e5740acc42c7",
+    "analytic/skills/review-and-complete-tasks/SKILL.md": "7c5ecd6b697fac2f98d690a7b8e050956a02da87074b746cc1529c42683e9bb5",
+    "analytic/steps/a00-clarifier.md": "d454c9047c2a9581f487b545df14eb8b9046d65705f4ebb4c5a0c86688cf13ba",
+    "analytic/steps/a01-diagnost.md": "c80080e12ca4007745f2e85d5ba298f33601d29fc140f84f76eec9b89966d170",
+    "analytic/steps/a02-analytic.md": "e2b4036911f749b0ddc5d7ee7e983e1de0dcb41f68b06d047142e28b7075c909",
+    "analytic/steps/a03-impact.md": "16f2e94008a1f1c87f2951cf04bac39740b43e82c600b75f04971a95364032de",
+    "analytic/steps/a04-decomposer.md": "49989ced47849eca116cc25dd8531bbdf2815efa18ab8150e9a86c428362fa7a",
+    "analytic/steps/a05-estimator.md": "635879a2306ee96330760968a8eeeb8a429dfde512f10fc4ce8312da215deb90",
+    "developer/references/tests-readme-example.md": "007be7a4e38be45b0408b510395a33a9e9eb2498ca6d99682df3b585d241aed4"
+  }
+}

@@ -1,0 +1,8 @@
+.idea/
+*.log
+.DS_Store
+.claude/sdd-cache/
+.claude/.simplify-ignore-cache/
+__pycache__/
+bin/
+dist/

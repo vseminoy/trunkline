@@ -1,0 +1,160 @@
+# Профиль стека: FastAPI + Pydantic v2 + aiosql + Alembic (PostgreSQL+PostGIS)
+#
+# Как устроен манифест (слоты, якоря путей, как копировать профиль) — profiles/README.md.
+# Ниже комментируется только то, что специфично для этого стека.
+
+name: oss-py-fastapi
+version: 1.4.0
+language: Python
+description: >
+  Бэкенд-сервисы на FastAPI (Python 3.11+), контракт-ориентированная (spec-driven)
+  разработка: контракт — спецификация OpenAPI 3.1, пишется и утверждается ДО кода
+  (шаг 5) и остаётся источником правды; шаг 8 генерирует по ней Pydantic-схемы
+  (datamodel-code-generator), а соответствие реализации спеке проверяют контрактные
+  тесты (schemathesis). Доступ к БД — aiosql (именованные SQL-запросы, без ORM)
+  поверх PostgreSQL 16 + PostGIS, миграции — Alembic на чистом SQL. Внешние
+  вычислительные и картографические сервисы (солвер маршрутизации на базе
+  Google OR-Tools, HTTP-клиент к OSRM) — обычные слои `service`/`client`, а не
+  особый случай. Фронтенд (React + TypeScript), если он в проекте есть, в слои
+  пайплайна не входит — это профиль бэкенда.
+
+# --- Стек: чем закрыт каждый слот пайплайна ------------------------------------
+#
+# Слот пустой (null) → шаги, которые на него опираются, не применимы
+# и объявляются как «не применимо» с объяснением.
+
+stack:
+  contract:
+    # Spec-first: спецификация — источник правды, пишется и утверждается на шаге 5,
+    # ДО того как шаг 8 генерирует по ней код. Генератор производит только схемы
+    # данных, а не серверный интерфейс целиком (см. `guidelines/08-generated-code.md`
+    # про то, почему роуты при этом остаются рукописными).
+    kind: "OpenAPI 3.1, spec-first — спецификация пишется и утверждается до кода"
+    codegen: datamodel-code-generator
+    artifact: "openapi/openapi.yaml + openapi/common.yaml (общие компоненты: ошибки, заголовки) — утверждается на шаге 5, до генерации кода на шаге 8"
+    # Раз генератор есть — не пишем руками то, что он производит: Pydantic-модели
+    # запроса/ответа. Роуты (`APIRouter`), их регистрация и зависимости (auth, DB,
+    # сервис) — по-прежнему рукописные: генератора, безопасно совмещающего их
+    # с DI FastAPI, в экосистеме нет, см. `08-generated-code.md`.
+    generated: ["Pydantic-схемы запроса/ответа (components.schemas) — src/api/schemas/generated/"]
+  db_access:
+    kind: "aiosql (именованные SQL-запросы в `.sql`-файлах, без ORM)"
+    artifact: "queries/*.sql"
+    # aiosql НЕ генерирует ни структур, ни типов: он превращает
+    # `-- name: get_engineer^` в вызов `queries.get_engineer(conn, id=3)`, который
+    # возвращает то, что вернул драйвер (dict/tuple), — не типизированный объект.
+    # Маппинг в Pydantic-модель на границе репозитория — ответственность профиля,
+    # см. `guidelines/03-data-types.md` и `guidelines/07-aiosql.md`.
+    generated: []
+  migrations:
+    kind: "Alembic, только raw SQL (`op.execute(...)`), без декларативных ORM-моделей"
+    artifact: "alembic/versions/<rev>_<slug>.py с upgrade() и downgrade() в одном файле"
+  http:
+    kind: FastAPI (Starlette + Uvicorn)
+    middleware: true
+
+# --- Команды проекта -----------------------------------------------------------
+#
+# Шаги 8, 16, 17, 19 и хук pre-commit вызывают их по имени слота, а не текстом.
+
+commands:
+  # Компиляции в Python нет — ближайший аналог сборки, ловящий опечатки и
+  # рассинхронизацию типов до рантайма, это статическая проверка типов.
+  build: "mypy src"
+  lint: "ruff check ."
+  test: "pytest -q"
+  # Разведены меткой `@pytest.mark.integration`, а не путём: маркер виден в самом
+  # тесте и не даёт положить integration-тест не в ту папку по невнимательности.
+  test_unit: "pytest -m 'not integration' -q"
+  test_integration: "pytest -m integration -q"
+
+# --- Файлы, без которых пайплайн не стартует -----------------------------------
+
+required_project_files:
+  - path: AGENTS.md
+    why: стандарты кода и блок `## Pipeline flags`
+  - path: pyproject.toml
+    why: конфиг ruff и mypy, метки pytest (`unit`/`integration`), манифест зависимостей
+  - path: alembic.ini
+    why: без него шаг 6 не знает, куда класть ревизию
+  - path: openapi/openapi.yaml
+    why: контракт — источник правды; без него шагу 5 не во что писать спецификацию,
+      а шагу 8 неоткуда генерировать схемы
+
+# --- Слои системы --------------------------------------------------------------
+#
+# Используются шагом 3 (импакт), шагом 7 (разбиение тестов по слоям)
+# и шагом 4 (декомпозиция). Порядок = снизу вверх по зависимостям.
+
+layers:
+  - id: db
+    name: схема БД и миграции
+    artifacts: ["alembic/versions/*.py", "SQL DDL схемы"]
+  - id: queries
+    name: доступ к данным (aiosql-репозитории)
+    artifacts: ["queries/*.sql", "репозитории поверх них"]
+    test_file: "tests/repository/test_<домен>.py"
+  - id: service
+    name: "бизнес-логика (включая сборку модели OR-Tools RoutingModel и оркестрацию перепланирования)"
+    artifacts: ["src/service/*.py"]
+    test_file: "tests/service/test_<модуль>.py"
+  - id: client
+    name: "внешние клиенты (HTTP-клиент к OSRM: /table, /route)"
+    artifacts: ["src/clients/*.py"]
+    test_file: "tests/clients/test_<клиент>.py"
+  - id: api
+    name: HTTP-слой (спецификация, FastAPI-роутеры и сгенерированные Pydantic-схемы)
+    artifacts: ["openapi/openapi.yaml", "src/api/routes/*.py", "src/api/schemas/generated/*.py"]
+    test_file: "tests/api/test_<ресурс>.py"
+
+# --- Гайдлайны: роль → файл ----------------------------------------------------
+#
+# Ядро ссылается на роль (`guidelines.api_spec` и т.д.), а не на имя файла.
+# `code_style`, `db_access`, `generated_code`, `logging` и `errors` ядро не спрашивает — это роли для
+# собственных надстроек шагов профиля.
+
+guidelines:
+  root: guidelines/
+  index: guidelines/README.md
+  roles:
+    migrations: 01-migrations.md
+    api_spec: 02-api-contract.md
+    data_types: 03-data-types.md
+    auth: 04-auth.md
+    db_schema_style: 05-db-schema-style.md
+    code_style: 06-code-style.md
+    db_access: 07-aiosql.md
+    generated_code: 08-generated-code.md
+    logging: 09-logging.md
+    errors: 10-errors.md
+
+# --- Надстройки шагов ----------------------------------------------------------
+
+step_overlays:
+  "00": steps/00-clarifier.md
+  "03": steps/03-impact.md
+  "05": steps/05-specifier.md
+  "06": steps/06-db-migrations.md
+  "07": steps/07-tester.md
+  "07a": steps/07a-consistency.md
+  "08": steps/08-generator.md
+  "09-10": steps/09-10-critic-security.md
+  "16": steps/16-observability.md
+
+# --- Трекер задач: где живут подзадачи и чем они заводятся ---------------------
+#
+# Явно `null`: у профиля нет привязки к конкретному издателю задач. Аналитик
+# складывает `.md` в папку, которую назовёт пользователь, шаги публикации
+# объявляются «не применимо». Профилю, которому нужен трекер, достаточно
+# добавить секцию `tasks` по устройству, описанному в `profiles/README.md`
+# (п. 5) — она не зависит от остального манифеста.
+
+tasks: null
+
+# --- Прочее --------------------------------------------------------------------
+
+hooks:
+  # Кэш документации для шага 8 — какие домены имеет смысл кэшировать.
+  doc_cache_targets: [FastAPI, Pydantic, "datamodel-code-generator", schemathesis, structlog, aiosql, Alembic, PostGIS, "Google OR-Tools", OSRM]
+  # Машинный гейт перед коммитом (установка — core/developer/ENFORCEMENT.md).
+  pre_commit_gate: hooks/pre-commit-gate.sh

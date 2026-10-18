@@ -1,0 +1,16 @@
+# Secrets — must never be committed
+.env
+.evn
+
+# Build output
+/bin/
+
+# Runtime task data (created/processed tasks)
+/tasks/
+/context/
+
+# IDE
+/.idea/
+
+# OS
+.DS_Store

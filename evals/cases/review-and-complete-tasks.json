@@ -1,0 +1,14 @@
+{
+  "skill_name": "review-and-complete-tasks",
+  "trigger": {
+    "positive": [
+      { "prompt": "The epic directory already holds subtasks — review them and estimate the ones without estimates", "top_k": 3 },
+      { "prompt": "Check the existing subtasks against the format and for coverage completeness, and write the missing ones", "top_k": 3 },
+      { "prompt": "Do not start from scratch: look over the finished set of tasks and put it in order", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "The task is vague, help me clarify it and break it down for the first time", "owner": "decompose-from-scratch" },
+      { "prompt": "Gather the module's AS-IS and record the code delta", "owner": "project-knowledge" }
+    ]
+  }
+}

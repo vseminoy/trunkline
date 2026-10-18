@@ -1,0 +1,14 @@
+{
+  "skill_name": "resolve-open-questions",
+  "trigger": {
+    "positive": [
+      { "prompt": "The decomposition is done but open questions remain — let us close them", "top_k": 3 },
+      { "prompt": "Work through the registry of unconfirmed assumptions and blockers, lift ready=false", "top_k": 3 },
+      { "prompt": "There are unresolved product questions on the subtasks, I need answers and the tasks updated", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Break a new task into subtasks for Jira", "owner": "decompose-from-scratch" },
+      { "prompt": "Record the accumulated knowledge about the codebase after the run", "owner": "project-knowledge" }
+    ]
+  }
+}

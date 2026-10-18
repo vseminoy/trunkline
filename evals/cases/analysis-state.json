@@ -1,0 +1,14 @@
+{
+  "skill_name": "analysis-state",
+  "trigger": {
+    "positive": [
+      { "prompt": "Starting an analyst session — restore the state: which step did we stop at", "top_k": 3 },
+      { "prompt": "Record this step's progress into the persistent analysis state", "top_k": 3 },
+      { "prompt": "What is still unfinished on the epic and which questions are left open", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Review the existing subtasks and fill in the estimates", "owner": "review-and-complete-tasks" },
+      { "prompt": "Describe the module's AS-IS and the history of changes by slice", "owner": "project-knowledge" }
+    ]
+  }
+}

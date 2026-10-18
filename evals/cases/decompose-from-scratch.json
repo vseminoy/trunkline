@@ -1,0 +1,33 @@
+{
+  "skill_name": "decompose-from-scratch",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Break this task into Jira subtasks, there is no decomposition yet",
+        "top_k": 3
+      },
+      {
+        "prompt": "All I have is a task description and the directory is empty — I need a decomposition from scratch with estimates",
+        "top_k": 3
+      },
+      {
+        "prompt": "Run the full analysis pipeline and write up the subtasks with estimates and dependency ordering",
+        "top_k": 3
+      },
+      {
+        "prompt": "Here is one task of epic PROJ-855 and its description — write it up with requirements and an estimate",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Restore which step we stopped at in the previous session",
+        "owner": "analysis-state"
+      },
+      {
+        "prompt": "The subtasks are already written, check them and fill in the missing estimates",
+        "owner": "review-and-complete-tasks"
+      }
+    ]
+  }
+}
